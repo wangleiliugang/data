@@ -1,0 +1,91 @@
+1.使用forms模块处理表单
+  1.forms模块的作用
+    通过forms模块，允许将表单控件与py文件相结合。
+  2.使用forms模块(**流程:forms.py->views.py->xx.html**)
+    1.创建forms.py文件
+    2.导入forms
+      from django import forms
+    3.创建class
+      一个class对应一个表单，且该class必须继承自forms.Form
+    4.在class中创建属性
+      一个属性对应一个表单控件。
+    5.在views.py中创建forms.Form对象并发送给模板。
+  3.在模板中解析form对象
+    1.注意：
+      1.需要自定义<form></form>
+      2.需要自定义<input type="submit" value="提交"> 提交按钮
+    2.处理方法
+      1.手动解析
+        {%for field in form%}
+            <p>{{field.label}}:{{field}}</p>
+        {% endfor %}
+      2.自动解析
+        {{form.as_p}}
+	      {{form.as_ul}},需要自定义ul
+	      {{form.as_table}},需要自定义table
+  4.在HTML中提交的表单内容也可以传递给forms.Form
+    ex:
+      views.py
+      def remark_views(request):
+          form = EntryForm(request.POST)---1.创建EntryForm对象
+	        if form.is_valid():           ---2.必须要经过验证才能获取数据
+	          cd = form.cleaned_data      ---3.该属性封装了提交的数据，cd的类型是一个字典
+            print(cd['属性名'])
+  5.forms的高级处理
+    将Models和Forms结合到一起使用，通过Models自动生成表单。
+    1.创建class，EntryForm 并继承自forms.ModelForm；
+    2.创建内部类Meta，并定义相关信息
+      1.model:指定关联的Models是什么
+      2.fields:
+        1.指定一个列表，声明允许生成表单控件的属性有哪些
+	      2.取值为"__all__"，表示全部属性都允许被生成表单控件
+      3.labels:取值为一个字典,将属性和显示文本对应起来。
+        ex:
+	      {
+	        '属性1':'显示文本1',
+	        '属性2':'显示文本2',
+	        ...
+	      }
+  6.内置小部件(widgets)
+    1.什么是小部件?
+      生成到网页上的控件的类型。
+    2.常用小部件
+      1.TextInput:type="text"
+      2.NumberInput:type="number"
+      3.EmailInput:type="email"
+      4.URLInput:type="url"
+      5.PasswordInput:type="password"
+      6.HiddenInput:type="hidden"
+      7.CheckboxInput:type="checkbook"
+      8.Textarea:<textarea></textarea>
+      9.Select:<select></select>
+    3.小部件的使用
+      1.继承自forms.Form
+        ex:
+	      subject = forms.CharField(
+	        label="标题",
+	        widget=forms.TextInput(
+	          attrs={
+		          'class':'form-control',
+		          'placeholder':'请输入用户名',
+		          ......
+		        }
+	        )
+	      )
+      2.继承自forms.ModelForm
+        ex:
+	        class LoginForm(forms.ModelForm):
+              class Meta:
+                  model = Users
+                  fields = ['uname','upwd']
+                  labels = {
+                      'uname':'用户名称',
+                      'upwd':'登录密码'
+                  }
+                  widgets = {
+                      'upwd':forms.PasswordInput(attrs={
+                          'class':'form-control',
+                          'placeholder':'请输入密码',
+                          ......
+                      })
+                  }

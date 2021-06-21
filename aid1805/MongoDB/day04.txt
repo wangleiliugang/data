@@ -1,0 +1,122 @@
+GridFS 大文件存储
+    文件的数据库存储
+    1.在　数据库中以字符串的方式存储文件在本地的路径
+    优点：节省数据库空间
+    缺点：当数据库或者文件位置发生变化时即无法找到文件
+    2.将文件以二进制数据的方式存储在数据库中
+    优点：文件和数据库绑定
+    缺点：当存储文件大时，空间使用大，提取困难
+
+GridFS：是mongo当中存储大文件的一种方案，mongo中认为超过16M的文件为大文件；
+        将文件存储在mongodb数据库中，通过两个集合共同完成该文件的存储．
+        fs.files:存储文件的相关信息
+            (比如：文件名filename，文件类型content_type等)
+        fs.chunks:实际存储文件内容，以二进制方式分块存储
+            (将大文件分成多个小块，每个小块占一条文档)
+      **GridFS文件存储**
+          mongofiles -d dbname put filename
+            dbname:要存储文件的数据库，如果不存在则自动创建
+            filename:要存储的文件
+            示例：
+              mongofiles -d mygrid put day01.txt
+              mongofiles -d mygrid put god\ is\ a\ girl.mp3
+        1.查看文件信息
+        db.fs.files.find()
+        2.查看具体文件内容
+        db.fs.chunks.find()
+        db.fs.chunks.find({files_id:ObjectId("5cbc7fe50b569a57e35db8ef")})
+            fs.chunks的域_id ---> files_id:值为对应文件在fs.files集合中的文档　_id值
+            n:分块信息
+            data:具体文件内容
+        优点：存储方便，没有文件个数限制，方便移植
+        缺点：读写效率低，只能整体修改不能分块更新
+
+游标
+    为什么使用游标？
+    1.防止网络拥塞，造成数据传输慢
+    2.避免用户解析带来的体验差，可以进行后端解析
+    使用方法：
+    > var cursor = db.class0.find()  # 创建游标
+    > cursor.hasNext()  # 查看是否有下一条文档
+    > cursor.next()  # 获取下一条文档内容
+
+**通过python操作mongo数据库**
+    数据库操作接口：pymongo
+    安装：sudo pip3 install pymongo
+
+导入模块:
+  from pymongo import MongoClient
+  import pymongo
+
+pymongo的使用流程:
+  1.创建mongo的连接对象
+    conn = MongoClient('localhost',27017)
+  2.选择要连接的数据库
+    db = conn.stu
+  3.选择要连接的集合
+    my_set = db.class0
+  4.使用mongo语句操控pymongo数据库
+  5.关闭数据库连接
+    conn.close()
+
+增加操作：
+    insert()  insert_many()  insert_one()  save()
+删除操作：
+    remove()
+    功能：删除一个文档
+    参数：可以通过query条件删除
+         可以通过文档的_id值进行删除
+查找操作：
+    find()
+    功能：查找数据库内容
+    参数：同mongoshell中find函数参数，需要复合python语法
+    返回值：可迭代的游标对象，通过for循环取值
+        *游标对象属性函数
+        next() ---> 取下一个文档
+        limit() ---> 显示多少文档
+        skip() ---> 跳过多少文档
+        sort() ---> 排序
+        count() ---> 统计
+    find_one()
+    用法同find，返回值为查找到的一个文档转变的字典
+    注意：python中支持mongodb所有的操作符，只是在使用的时候需要通过引号''变为字符串的形式
+    比如：db.class0.find({'age':{'$gt':20}})
+         db.class0.find({'$or':[{'name':'zhang'},{'age':{'$lt':18}}]})
+修改操作
+    1.update()
+      同mongoshell中的update操作
+    2.update_many()
+      当匹配到多个文档时全部修改
+    3.update_one()
+      只能修改匹配到的第一条文档
+索引
+    1.ensure_index:创建单一索引
+        index = my_set.ensure_index('name')
+        创建复合索引，1表示升序，-1表示降序
+        index = my_set.ensure_index([('name',1),('king',-1)])
+    2.create_indexes():创建多个索引
+      导入模块：from pymongo import IndexModel
+        1.创建索引条件对象
+        index1 = IndexModel([('name',1),('king',-1)])
+        index2 = IndexModel([('other_name',1)])
+        2.将索引对象放入列表中，使用create_indexes生成索引
+        indexes = my_set.create_indexes([index1,index2])
+    3.创建唯一索引
+      index = cls.ensure_index('name', unique=True, sparse=True)
+    4.list_indexes():查看指定集合中的索引
+    　　  参数：无
+    　　  返回值：迭代对象，每个值为一个索引信息
+    5.drop_index():删除一个索引
+    　　　　参数：索引的名称
+    　　drop_indexes():删除指定集合中的所有索引
+聚合
+    aggregate()
+    功能：实现mongo的聚合操作
+    参数：mongo shell中聚合函数的参数一致，在使用聚合操作符时用引号""变为字符串即可
+    返回值：迭代对象，同find的返回值类型
+
+**文件的存储**
+    1.GridFS文件提取
+      详见：grid.py
+    2.普通文件以二进制方式存入数据库
+      详见：save_file.py

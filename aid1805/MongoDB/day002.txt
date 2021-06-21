@@ -1,0 +1,154 @@
+查找
+    mysql中查找命令：select ... from tablename where ...
+    MongoDB中查找命令：
+    1.db.集合名.find(query,field)
+        功能：查找所有符合筛选要求的文档
+        参数：query 筛选条件
+             field 展示的域 ---> 0 表示不展示该域 
+                           ---> 1 表示展示该域
+                           db.class1.find({},{_id:0})
+                           db.class1.find({},{name:1})
+                           db.class1.find({},{_id:0,sex:0})
+                           db.class1.find({},{_id:0,name:1,age:1})
+        返回值：返回所有符合要求的文档
+        *field选择要展示的域
+          1.以键值对的形式给每个域赋值0，1表示是否要显示该域
+          2.如果给某个域设置为0，则其它域自动为1；如果给某个域设置为1，则其它域自动为0；两者不能混用
+          3._id比较特殊，默认为1，如果不想显示则设置为0；
+            _id为0时，其它域可以设置为1
+          4.如果不写field参数，则表示显示所有的域
+        *query筛选条件 
+          1.以键值的方式确定查找条件
+          2.如果不写query参数，则表示查找所有的文档
+            查找年龄为22的人 ---> db.class0.find({age:22},{_id:0})
+    2.db.集合名.findOne(query,field)
+        功能：查找符合条件的第一条文档
+        参数：query 筛选条件
+             field 展示的域 ---> 0 表示不展示该域 
+                           ---> 1 表示展示该域
+        返回值：返回查找到的文档
+        查找年龄为22的第一个人 --->db.class0.findOne({age:22},{_id:0})
+
+query的其它用法
+比较操作符
+    $eq  等于
+        db.class0.find({age:{$eq:22}},{_id:0})　
+        等价　db.class0.find({age:22},{_id:0})
+        *比较运算符也是用键值的方式，给比较运算符设置一个值，表示相应的关系
+    $lt  小于
+        db.class0.find({age:{$lt:22}},{_id:0})
+        db.class0.find({age:{$lt:100}})
+        *在mongodb中字符串也可以比较大小
+    $lte  小于等于
+        db.class0.find({age:{$lte:22}},{_id:0})
+    $gt  大于
+        db.class0.find({age:{$gt:22}},{_id:0})
+    $gte  大于等于
+        db.class0.find({age:{$gte:22}},{_id:0})
+    $ne  不等于
+        db.class0.find({age:{$ne:22}},{_id:0})
+        *如果某个文档没有age这个域，则会在不等于XX中显示出来
+    $in  包含
+        db.class0.find({age:{$in:[22,23,24]}},{_id:0})
+        *找出年龄为22，23，24的文档
+    $nin  不包含
+        db.class0.find({age:{$nin:[22,23]}},{_id:0})            
+逻辑操作符
+    $and  逻辑与
+        db.class0.find({age:22,sex:'m'},{_id:0})
+        等价　db.class0.find({$and:[{age:22},{sex:'m'}]},{_id:0})
+        1.默认在query中，逗号分隔的多个条件即为逻辑与关系
+          查找年龄在20到25之间的人：
+          db.class0.find({age:{$gt:20,$lt:25}},{_id:0})
+    $or  逻辑或
+        查找age:22或者sex:'w'的人：
+        db.class0.find({$or:[{age:22},{sex:'w'}]},{_id:0})
+        查找年龄小于20或者大于25的人：
+        db.class0.find({$or:[{age:{$lt:20}},{age:{$gt:25}}]},{_id:0})
+    $not  逻辑非(单目运算符，域要在最前面)
+        查找年龄不等于22的人：
+        db.class0.find({age:{$not:{$eq:22}}},{_id:0})
+    $nor  既不也不(集合中的条件都不满足的文档)
+        查找年龄不等于18，性别也不是'm'的人：
+        db.class0.find({$nor:[{age:18},{sex:'m'}]},{_id:0})
+    条件混合
+        年龄小于19或者姓名为arong并且sex:'w'的人：
+        db.class0.find({$or:[{age:{$lt:19}},{name:'arong',sex:'w'}]},{_id:0})
+
+数组查找
+    1.查看hobby数组中含有python的文档：
+        db.class1.find({hobby:'python'},{_id:0})
+    2.$all  查找数组中包含多项的文档
+        查看hobby数组中既包含python又包含game的文档：
+        db.class1.find({hobby:{$all:['python','game']}},{_id:0})
+    3.$size  查找数组中项数为指定个数的文档
+        查找数组中包含2个元素的文档：
+        db.class1.find({hobby:{$size:2}},{_id:0})
+    4.$slice  显示数组当中的前几项db.class.insert({name:'xwang',age:12,sex:'m',hobby:['pythony',','dance']}):(与第二个参数相关)
+        显示数组当中的前1项：
+        db.class1.find({},{_id:0,hobby:{$slice:1}})
+        表示跳过第1项显示后面2项：
+        db.class1.find({},{_id:0,hobby:{$slice:[1,2]}})
+
+其它查找方法
+    5.$exists  判断一个域是否存在
+        查找存在sex域的文档：
+        db.class0.find({sex:{$exists:true}},{_id:0})
+        查找不存在sex域的文档：
+        db.class0.find({sex:{$exists:false}},{_id:0})
+    6.$mod  通过整除余数进行查找
+        查找age域的值被3整除余数为0的文档：
+        db.class0.find({age:{$mod:[3,0]}},{_id:0})
+        查找age域的值被3整除余数为1的文档：
+        db.class0.find({age:{$mod:[3,1]}},{_id:0})
+    7.$type  查找值为指定数据类型的文档(百度搜索:mongodb type)
+        查找age域的值数据类型为1的文档：
+    　　　　db.class0.find({age:{$type:1}},{_id:0})
+
+和查询结果相关的几个函数
+    1.distinct()
+      功能：查看一个集合中某个域的值所覆盖的范围
+        查看class0集合中文档age域都包含哪些值：
+        db.class0.distinct('age')
+        查看class1集合中文档hobby域都包含数据：(查看列表域则将列表值整合)
+        db.class1.distinct('hobby')
+    2.pretty()
+      功能：将查询结果格式化显示
+        db.class0.find({},{}).pretty()
+    3.limit(n)
+      功能：查询结果显示前n个文档
+        显示查询结果的前3行文档：
+        db.class0.find().limit(3)
+    4.skip(n)
+      功能：查询结果跳过前n条文档进行显示
+        跳过前2条文档进行显示：
+    　　　　db.class0.find().skip(2)
+    5.count()
+      功能：对查询结果进行计数
+        统计age为22的文档个数：
+        db.class0.find({age:22},{_id:0}).count()
+    6.sort()
+      功能：按照指定的字段进行排序
+      参数：键值对  某个域按照升序排序则值为1；降序则值为-1
+        查询结果按照age降序进行排序：
+        db.class0.find({},{_id:0}).sort({age:-1})
+        复合排序：当第一个排序项相同时，使用第二个排序项进行排序
+        db.class0.find({},{_id:0}).sort({age:1,name:-1})
+    *函数的联合使用
+        获取年龄最小的3个文档：    
+        db.class0.find({},{_id:0}).sort({age:1}).limit(3)
+
+删除文档
+    db.集合名.remove(query,justOne)
+      参数：query ---> 定位要删除的文档数据(类似sql中的where子句)，用法和查找相同
+           justOne ---> 给定bool值，默认为false，表示删除所有符合条件的数据文档;
+                                如果赋值为true，表示只删除第一条符合条件的文档.
+         删除所有不包含sex域的文档：
+        　db.class0.remove({sex:{$exists:false}})
+         删除第一条年龄为22的文档：
+         db.class0.remove({age:22},true)
+         删除年龄小于11并且为女性的文档：
+         db.class.remove({age:{$lt:11},sex:'m'})
+         或者db.class.remove({$and:[{age:{$lt:11}},{sex:'w'}]})
+删除集合中所有的文档
+    db.集合名.remove({})

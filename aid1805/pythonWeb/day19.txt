@@ -1,0 +1,118 @@
+1.使用后台管理Models
+  后台登陆地址:http://localhost:8000/admin
+  1.创建后台管理员
+    ./manage.py createsuperuser
+    Username:
+    Email Address:
+    Password:
+    Paddword(again):
+    启动服务：./manage.py runserver
+    登陆后台：http://localhost:8000/admin
+  2.基本管理
+    1.在应用中的admin.py中注册要管理的数据
+      1.admin.py
+        作用：注册需要管理的Models,只有在此注册的Model才允许被管理，否则无法管理。
+      2.注册Model
+        from .models import *
+	    admin.site.register(Entry)
+	    ex:
+	      admin.site.register(Author)
+      3.修改models.py处理显示内容
+        由于后台默认效果可读性不高，需要在models.py中的各个类class中追加：
+	    def __str__(self):
+	      return self.name
+      4.通过内部类Meta实现展现的属性
+        允许为每个model类设置内部类Meta来设置其展现形式。
+	    ex:
+	    class Author(models.Model):
+	      ......
+	      ......
+	      class Meta:
+	        1.db_table:指定该实体类对应到数据库表的名称
+	        2.verbose_name:定义该实体类在admin中显示的名字(单数形式)
+	        3.verbose_name_plural:效果同上，是复数形式
+	        4.ordering:在后台显示数据时的排序规则，指定排序的字段，取值是一个列表，
+	                 默认是升序，降序的话则添加'-'。
+       5.添加ImageField时，需要安装Pillow模块。
+         picture = models.ImageField(null=True, upload_to='static/upload/usrimg', verbose_name='用户图像')
+  3.高级管理
+    1.在admin.py中创建管理类，实现高级管理功能。
+      1.定义EntryAdmin类，继承自admin.ModelAdmin
+        class AuthorAdmin(admin.ModelAdmin):
+	    ......
+      2.注册高级管理类
+        admin.site.register(Entry, EntryAdmin)
+      3.允许在EntryAdmin中增加的属性
+        1.list_display
+	      作用：在显示实体信息的页面上，显示哪些字段;
+          取值：由属性名组成的元组或列表.
+	    ex:
+	      list_display = ('name','age','email')
+	    2.list_display_links
+	      作用：定义能够链接到具体实体页面的链接们;
+	      取值：由属性名组成的元组或列表;
+	      注意：取值必须出现在list_dispiay中.
+          ex:
+	        list_display_links = ('name','email')
+	    3.list_editable
+	      作用：定义在列表页面中允许被修改的字段;
+	      取值：由属性名组成的元组或列表;
+	      注意：list_editable的值不能出现在list_display_links中.
+	    4.search_fields
+	      作用：添加允许被搜索的字段;
+          取值：由属性名组成的元组或列表.
+	    5.list_filter
+	      作用：在列表的右侧增加过滤器，实现快速筛选;
+          取值：由属性名组成的元组或列表.
+	    6.date_hierarchy
+	      作用：在顶部增加一个时间选择器，所以取值必须是DateField或DateTimeField的列值
+	    7.fields
+	      作用：在实体的详细页面中，显示哪些属性并按照什么样的顺序显示;
+	      取值：由属性名组成的元组或列表.
+	    8.fieldsets
+	      作用：在实体的详细页面中，对属性进行分组。
+	      注意：fieldsets与fields不能共存。
+	      语法：
+	      fieldsets = (
+	        ('分组名称',{'fields':('属性1','属性2',...),'classes':('collapse',)}),
+	        ......
+	      )
+2.Django中的连接查询
+  1.一对一映射（1:1）
+    1.什么是一对一?
+      A表中的一条记录只能与B表中的一条记录匹配关联.
+      数据库中的实现：
+        A表：设计主键
+	    B表：有主键，增加一列，并引用A表中的主键值，并且还得增加一个唯一约束
+    2.语法
+      属性 = models.OneToOneField(Entry)
+    3.查询
+      class Wife(models.Model):
+        ......
+        auth = models.OneToOneField(Author)
+	正向查询：通过wife查找author
+	  w = Wife.objects.get(id=1)
+	  a = w.auth
+	反向查询：通过auth找wife
+	  aa = Author.objects.get(id=1)
+	  ww = aa.wife 
+	    (wife是由Django通过OneToOneField在Author中默认增加的一个属性)
+  2.一对多映射(1:M)
+    1.什么是一对多?
+      A表中的一条数据可以与B表中的任意多条数据匹配。
+    2.语法
+      使用外键(Foreign Key)，外键加在多的那张表里。
+      属性 = models.ForeignKey(实体类)
+      ex:
+        Book(M)和Publisher(1)
+	    class Book(models.Model):
+	      ......
+          pub = models.ForeignKey(Publisher)
+    3.查询
+      1.正向查询 （通过Book查询Publisher）
+        b = Book.objects.get(id=3)
+	    p = b.pub
+      2.反向查询  （通过Publisher查询Book）
+        publisher = Publisher.objects.get(id=1)
+	    通过publisher.book_set.all()得到所有的关联数据
+        bookSet = publisher.book_set.all()

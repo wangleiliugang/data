@@ -1,0 +1,208 @@
+名词介绍
+  DB(database):DB就是数据库，存储数据的仓库
+  DBMS(database Management System):数据库管理系统
+    管理数据库的软件有:MySql, Qracle, ...
+  DBS(database system):数据库系统
+    DBS = DB(后端的存储)+DBMS(数据库软件)+数据库应用(财务管理系统, 人事管理系统)+用户
+
+where 条件子句(配合查，改，删操作)
+  语法格式：select * from 表名　where 条件;     #(条件格式：字段名=值)
+**表记录管理**
+    1.在表中插入记录:
+        1.语法格式:insert into 表名 values(值1),(值2),...;
+    2.查看表记录:
+        1.select * from 表名;
+        2.select 字段名1,字段名2,...from 表名;
+    3.更新表记录:
+        1.update 表名　set 字段名=值1，字段名=值2，... where 条件;
+            注意：update 语句后如果不加where 子句，表中所有记录该字段的值都会更改！
+    4.删除表记录：
+        1.delete from 表名　where 条件;
+            注意：delete 语句后如果不加where 子句，将会把表中所有记录全部删除！
+  运算符操作(配合查询，修改，删除操作)
+    数值比较＆字符比较
+      数值比较运算符: = != > >= < <=
+      字符比较运算符: = !=
+      语法格式
+      　　查询：select * from 表名 where 字段名 运算符　数字/字符;
+      　　修改：update 表名 set 字段名=值,... where 字段名 运算符　数字/字符;
+      　　删除：delete from 表名 where 字段名 运算符　数字/字符;
+    逻辑比较
+      运算符：and (多个条件同时满足)
+             or (多个条件有一个条件满足即可)
+    范围内比较
+      运算符：between and / in / not in
+      语法格式: 字段名　between 值1　and 值2;
+               字段名　in(值1, 值2, ...);
+               字段名　not in(值1, 值2, ...);
+    匹配空和非空
+      空：is null
+      非空：is not null
+      注意：null，空值，必须用is 或者 is not 去匹配
+           ""，空字符串，用= 或者 != 去匹配
+    模糊比较
+      语法格式：字段名　like 表达式
+        表达式：_ , 匹配单个字符
+               % , 匹配0到多个字符
+
+SQL查询
+  总结(执行顺序)
+    3,select ... 聚合函数 from ...
+    1,where ...
+    2,group by ...
+    4,having ...
+    5,order by ...
+    6,limit ...;
+  order by
+    作用：对查询的结果进行排序
+    语法格式：order by 字段名　排序方式;
+    排序方式: 1.ASC(默认): 升序
+             2.DESC :　降序
+    示例：select * from sanguo order by fangyu;
+         select * from sanguo where country="蜀国"  order by gongji desc;
+         select * from sanguo where country in("蜀国","魏国") and sex="男" and name like "___" order by fangyu asc;
+         select * from sanguo where (country="魏国" or country="蜀国") and sex="男" and name like "___" order by fangyu;
+  limit(永远放在SQL语句的最后面)
+    作用：限制显示查询记录的条数
+    用法：　1.limit n   # 显示n　条记录
+          2.limit m, n    # 代表从第m+1 条记录开始显示，显示n　条记录
+            (m的值是从0开始计数的，如m=3即是从第4条记录开始)
+    示例：select * from sanguo where country="蜀国" order by fangyu limit 1,3;
+         select name,gongji,country from sanguo where country="蜀国" and name is not null  order by gongji desc limit 3;
+  聚合函数
+  　　分类：
+      1.avg(字段名):求字段的平均值
+      2.sum(字段名):求字段的和
+      3.max(字段名):求字段的最大值
+      4.min(字段名):求字段的最小值
+      5.count(字段名):统计该字段的个数
+    示例：select max(gongji) from sanguo;
+    　　　　　select max(gongji) as gongjipaixu from sanguo;
+         select count(id) as c_id,count(name) as c_name from sanguo;
+         select sum(gongji) as s_gj from sanguo where country="蜀国";
+         select count(*) as c_gj from sanguo  where gongji > 200 and country="蜀国";
+    注意：空值null 不会被count统计; ""可以被统计
+  group by
+    作用：给查询的结果进行分组
+    示例：select country from sanguo group by country;
+         select country,avg(gongji) from sanguo group by country;
+         select country,count(*) from sanguo group by country order by count(*) desc limit 2;
+    注意:1.group by 之后的字段必须是select 之后的字段
+        2.如果select 之后的字段和group by 之后的字段不一致，则必须要对select 之后的该字段值做聚合处理        
+  having
+    作用：对查询的结果进行进一步的筛选
+    示例：
+    mysql> select country,avg(gongji) from sanguo
+        -> group by country
+        -> having avg(gongji) > 105
+        -> order by avg(gongji) desc
+        -> limit 2;
+    注意:1.having 语句通常与group by语句联合使用，用来过滤由group by 语句返回的记录集
+        2.having 语句的存在弥补了where关键字不能与聚合函数联合使用的不足，having操作的是聚合函数生成的显示列
+　　distinct
+    作用：不显示字段的重复值
+    示例：select distinct country from sanguo;
+         select distinct country,name from sanguo;
+         select count(distinct id) from sanguo where country="蜀国";
+    注意：1.distinct处理的是distinct和from之间的所有字段，所有字段值必须全部相同才能去重
+         2.distinct不能对任何字段做聚合处理
+  查询表记录时做数学运算
+    运算符：+ - * / %
+    示例：select id,name,gongji * 10 as new_gongji from sanguo;
+         select id,name,fangyu + 5 as new_fangyu from sanguo;         
+
+**约束**
+  作用：为了保证数据的完整性，一致性，有效性
+  约束分类：
+    **1.默认约束(default)**
+       作用：在插入记录时，如果不给该字段赋值，则使用默认值
+       格式：字段名　数据类型　default 值
+       示例：
+       mysql> create table t1(
+           -> id int(3) zerofill,
+           -> name char(20),
+           -> sex enum("F","M","secret") default "secret",
+           -> age tinyint unsigned
+           -> )default charset=utf8;
+       mysql> insert into t1(id,name) values(1,"xiaoli");
+    **2.非空约束(not null)**
+       作用：不允许将该字段设置为NULL
+       格式：字段名　数据类型　not null
+       示例：
+       mysql> create table t2(
+           -> id int,
+           -> name varchar(15) not null default "王者"
+           -> )default charset=utf8;
+
+索引
+  定义：对数据库中表的一列或者多列的值进行排序的一种结构(MySQL 中用Btree方式)
+  　　　　　# MySQL下 Btree只支持分三层
+  优点：加快数据的检索速度
+  缺点：1.当对表中的数据进行中增加，删除或修改的时候，索引也需动态维护，降低了数据的维护速度
+       2.索引需要占用物理空间
+  索引分类：
+    1.普通索引(index)
+        1.使用规则：
+      　　    1.一个表中可以有多个index 字段
+            2.字段的值可以有重复且可以为NULL值
+            3.经常把做查询条件的字段设置为index 字段
+            4.index 字段的key 标志是MUL
+        2.创建index
+          1.创建表时创建：index(字段名1),index(字段名2),...
+            示例：
+            mysql> create table t4(
+                -> id int,
+                -> name char(20),
+                -> age tinyint unsigned,
+                -> index(id),
+                -> index(name)
+                -> );
+          2.在已有表中创建index
+              语法：create index 索引名 on 表名(字段名);
+              注意：索引名一般和字段名一样
+              示例：
+              mysql> create index age on t4(age);
+        3.查看普通索引
+          1.desc 表名; --> 查看key标志
+          2.show index from 表名;
+          示例：
+          mysql> show index from t4\G;
+        4.删除索引
+          drop index 索引名 on 表名;
+          mysql> drop index id on t4;
+    2.唯一索引(unique key)
+        1.使用规则
+          1.一个表中可以有多个unique 字段
+          2.unique 字段的值不允许重复，但可以为空值NULL
+          3.unique 的key 标志是UNI
+        2.创建唯一索引unique
+          1.创建表时创建
+            1.unique(字段名1),unique(字段名2),...
+            mysql> create table t5(
+                -> id int,
+                -> name varchar(15),
+                -> number char(11),
+                -> unique(id)
+                -> );
+            2.字段名　数据类型　unique,
+            示例：
+            mysql> create table t5(
+                -> id int,
+                -> name varchar(15),
+                -> number char(11) unique
+                -> );
+          2.在已有表中创建
+            create unique index 索引名 on 表名(字段名);
+            示例：
+            mysql> create unique index name on t5(name);
+        3.查看索引
+          1.desc 表名; --> 查看key标志
+          2.show index from 表名;
+        4.删除唯一索引
+          drop index 索引名 on 表名;
+        注意：index,unique 在删除时只能逐一删除
+
+mysql> select user_id,count(user_id) from comment
+    -> group by user_id
+    -> order by count(user_id) desc
+    -> limit 10;

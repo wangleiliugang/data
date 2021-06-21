@@ -1,0 +1,85 @@
+一.集中式与分布式区别
+  集中式
+  分布式
+
+二.git常用命令
+  版本仓库：储存代码文件等的地方。
+  本地仓库：本机仓库。
+  远程仓库：充当"中央服务器"，用于不同节点之间进行代码交换的地方。
+  克隆：复制。
+  分支：不同分支做不一样的事情，用于协同开发。
+  标签：用于标注版本信息的"指针"，指向某一个commit位置。
+
+  git
+  远程仓库：github,coding,gitee
+  https://github.com/
+  https://coding.net/
+  https://gitee.com/
+
+  安装git:sudo apt-get install git
+  使用git:
+   1.mkdir gitdemo --> cd gitdemo    新建空目录用于创建仓库
+   2.git init                        使用git初始化空仓库
+   3.ls -ah                          查看空仓库
+-----------------------------------------------------------------------------
+   4.git add abc.txt                 使用git将文件加到仓库中，并未入库(无提示表示OK)
+   5.git commit -m "add abc.txt"     使用git将文件提交到仓库中(-m "注释内容")
+     git config --global user.email "137753633@qq.com"
+     git config --global user.name "137753633"
+-----------------------------------------------------------------------------
+   6.git status                      查看当前仓库的状态
+   7.git diff abc.txt                查看已修改的文件的修改内容
+   8.git log                         查看日志文件，获取提交记录
+   9.git reset --hard HEAD 版本号(即commit ID) 回退到某个版本(回退到上一个提交的commit)
+     git reset --hard HEAD^          返回上一个版本(回退到上一个提交的commit)
+   10.git rm abc.txt                 删除仓库中文件
+1.先有本地仓库，后有远程仓库。
+获取远程仓库，与本地仓库之间建立链接关系。
+   1.git remote add origin https://github.com/wangleiliugang/gitdemo.git  建立和远程仓库的连接
+   **2.git pull origin main  # 从远程仓库同步到本地仓库**
+
+使用SSH进行上传提交更新时需要公钥。
+   1.ssh-keygen -t rsa -b 4096 -C "137753633@qq.com"    生成获取pubkey
+     生成的pubkey默认位置:/home/tarena/.ssh目录下；
+     使用cat id_rsa.pub打开后复制内容；
+     在github中setting中的SSH and GPG key 中添加SSH key；
+     **报错:sign_and_send_pubkey:......**
+       解决办法：运行ssh-add
+   **2.git push origin master # 从本地仓库提交同步代码到远程仓库**
+--------------------------------------------------------------------------
+2.先创建远程仓库，再有本地仓库。
+   1.mkdir gitdemo11 --> cd gitdemo11
+   2.git clone https://github.com/wangleiliugang/gitdemo.git
+     克隆远程仓库到本地空目录下；
+     自动生成对应的本地仓库，本地仓库与远程仓库相对应；
+
+**标准流程：**
+    git add hello.py
+    git commit -m "hello.py"
+    git status
+    git pull origin master
+    git push origin master
+
+分支：
+  创建分支:git branch 分支名称
+  查看分支:git branch 
+  切换分支:git checkout 分支名称
+  创建新分支并切换到新分支上:git checkout -b 分支名称
+  合并分支，将其他分支合并到当前分支:git merge 其他分支名称
+  删除分支:git branch -d 将要删除的分支名称
+合并分支冲突情况：
+  git merge 其他分支名称
+  合并冲突...
+  查看冲突:git diff 文件名称
+  解决办法：
+    手动修改要保存内容;
+    git add 文件名称
+    git commit -m "XXX"
+    git merge 其他分支
+
+标签：
+  创建标签:git tag v1.0
+  查看标签:git tag
+  查看标签具体内容:git show 标签名称
+  在一行内查看log:git log --oneline
+  对已操作过的commit进行添加标签:git tag -a 标签名称 -m "标签注释" commit的ID

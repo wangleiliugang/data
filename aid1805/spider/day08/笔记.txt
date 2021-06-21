@@ -1,0 +1,53 @@
+1.网站如何发现爬虫
+    一般来说，网站会有以下一些简单的策略发现爬虫程序。
+    单一IP非常规的访问频次；
+    单一IP非常规的数据流量；
+    大量重复简单的网站浏览行为，只下载网页，没有后续的JS,CSS请求；
+    通过一些陷阱来发现爬虫，例如一些通过CSS对用户隐藏的链接，只有爬虫才会访问。
+    
+2.scrapy
+    Anaconda安装：conda install scrapy
+    ubuntu安装：Scrapy in Ubuntu:
+               sudo apt-get install python-dev python-pip libxml2-dev libxsltl-dev
+               sudo pip install scrapy
+    
+    命令：
+    bench         Run quick benchmark test
+    commands
+    fetch         Fetch a URL using the Scrapy downloader
+    genspider     Generate new spider using pre-defined templates
+    runspider     Run a self-contained spider (without creating a project)
+    settings      Get settings values
+    shell         Interactive scraping console
+    startproject  Create new project
+    version       Print Scrapy version
+    view          Open URL in browser, as seen by Scrapy
+
+    制作一个scrapy爬虫需要的四个步骤：
+        1.新建爬虫项目，可能包含多个爬虫。
+            scrapy startproject scrapyTest
+        2.明确抓取的目标，生成一个具体的爬虫。
+            使用命令：dir /p和dir /a查看结构框架
+            cd scrapyTest
+            cd spiders
+            scrapy genspider tencent hr.tencent.com
+            下面需要修改具体的代码，实现我们需求的爬虫逻辑。
+            1.settings.py:设置文档
+              注释掉robots协议；
+              修改headers内容；
+              打开item pipelines开关。
+            2.pipelines.py:保存的逻辑
+              重写process_item这个方法,可以写到本地文件系统，也可以写到数据库。
+            3.tencent.py:抓取页面信息和继续跳转的信息
+              
+            4.items.py:保存item的映射
+              把需要抓取的数据做映射：
+              name = scrapy.Field()
+        3.制作爬虫(spider/spiderName.py):制作爬虫开始爬取网页。
+        4.存储内容(pipelines.py):设计管道存储爬取内容。
+        5.在Scrapy下启动爬虫。
+            scrapy crawl tencent
+            
+    
+    
+

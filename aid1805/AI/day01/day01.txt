@@ -1,0 +1,156 @@
+人工智能
+    matlab + C/C++
+    numpy,scipy,matplotlib,sklearn,tensorflow,...
+    python
+    第一阶段：数据分析
+    第二阶段：机器学习
+            　深度学习
+            　　强化学习
+一．numpy入门
+    1.numpy是什么？
+        Numerical Python的缩写，意为＂数值的Python＂.
+        numpy是一整套开源科学计算库．
+        numpy弥补了作为通用编程语言的Python在数值计算方面：能力弱，速度慢的不足．
+        numpy拥有丰富的数学函数，强大的多维数组和优异的运算能力．
+        numpy与scipy,scikits,matplotlib等其它科学计算库可以很好的协调工作．
+        numpy可取代matlab和mathematica的功能，并允许用户进行快速交互式原型开发．
+    2.numpy的历史背景
+        1995年，numeric;
+        2001年，numarray;
+        2005年，重构numeric;
+        2006年，numpy.
+    3.为什么使用numpy？
+        同样的计算任务，使用numpy比纯python代码要少很多．
+        存储效率和I/O性能远胜于python.
+        numpy的底层实现使用C语言甚至汇编语言，运行速度达到极限．
+        numpy是完全开源的，成本低且没有法律风险．
+    4.numpy的局限性
+        内置数据结构的通用性不及python，在科学计算以外的领域，numpy的优势并不明显．
+        numpy的模块是用C语言编写的，不支持jython.
+    5.numpy的安装
+        在线安装：python -m pip install numpy  --纯numpy
+                 numpy+mkl(Intel(R) Math Kernel Library)
+        离线安装：python -m pip install numpy-1.16.6+mkl文件（需要先cd到该目录下）
+    6.numpy的核心--多维数组
+        代码：vector_sum.py
+
+二．numpy基础
+    1.数组对象
+        numpy的数组对象是numpy.ndarray类型的对象．其中包括实际数据，以及描述这些数据的元数据，大部分针对数组的操作实际上仅仅是针对其元数据的操作，以提升性能．
+        numpy数组的元素必须是同质的，即类型完全一致．
+        numpy数组的下标从0开始，最后一个元素的下标是数组长度减1．
+        numpy数组对象的dtype属性表示元素的数据类型．
+        numpy数组对象的shape属性表示数组的维度，通过一个tuple表现，其中的每一个元素即相应维度的大小．
+        numpy.arange(起始值，终止值，步长)：获得一个数组形式的序列．
+        numpy.array([元素1，元素2，．．．])：获得一个包含给定元素的数组对象．
+    2.下标访问
+        数组对象[第一维度索引,第二维度索引,...]
+        代码：shape.py
+    3.数据类型
+        python的内置类型：bool,int,float,complex,str,tuple,list,dict,set,...
+        numpy的内置类型：包含python的内置类型,bool_,int8/int16/int32/int64,
+                        uint8/uint16/uint32/uint64,float16/float32/float64,
+                        complex64/complex128,str_
+        自定义类型：
+            t = numpy.dtype(T)
+            a = numpy.array([...],dtype=t)
+            1.T:python或numpy的内置类型
+                t = numpy.dtype(int)
+                t = numpy.dtype(numpy.int32)
+            2.T:类型字符串
+                t = numpy.dtype('int')
+                t = numpy.dtype("int32")
+            3.T:类型字符编码
+                t = numpy.dtype('>(2,3)4i4')
+                >:大端字节序
+                (2,3):维度
+                4:分量数
+                i:分量类型
+                4：分量字节数
+            4.T:(变长类型，长度)
+                t = numpy.dtype((numpy.str_,14))
+            5.T:(定长类型，维度)
+                t = numpy.dtype((int,5))
+            6.T:逗号分隔的多个类型字符串
+                t = numpy.dtype('U14,i4')
+            7.T:[(字段名称，字段类型，字段维度),(),...]
+                t = numpy.dtype([('name',numpy.str_,14),('age',numpy.int32)])
+    4.numpy的类型字符码
+        布尔：?
+        有符号字节：b
+        无符号字节：B
+        整型：i/i2/i4
+        无符号整型：u/u2/u4/u8
+        浮点型：f2/f4/f8
+        复数：c8/c16
+        时间增量：m
+        时间：M
+        python对象：Ｏ
+        字节序列形式的字符串：S或者a
+        unicode字符串：U
+        空类型：V
+        字节序：大端(高位低址) > 
+               小端(高位高址) <
+               自动(自动匹配硬件字节序) =
+    5.数组切片
+        代码：slice.py
+    6.改变数组维度
+        视图变维:
+            a = numpy.arange(1,7)  #[1 2 3 4 5 6]
+            b = a.reshape(2,3)  #[[1 2 3]
+                                  [4 5 6]]
+            c = b.reshape()  #[1 2 3 4 5 6]
+            d = b.raval()  #[1 2 3 4 5 6]
+        复制变维:
+            e = b.flatten()  #[1 2 3 4 5 6]
+        就地变维:
+            a.shape = (2,3)  #[[1 2 3]
+                               [4 5 6]]
+            a.resize((3,2))  #[[1 2]
+                               [3 4]
+                               [5 6]]
+        视图转置:
+            f = a.transpose()  #[[1 3 5]
+                                [2 4 6]]
+            g = np.array([e]).transpose()  #[[1]
+                                             [2]
+                                             [3]
+                                             [4]
+                                             [5]
+                                             [6]]
+            g = e.reshape(-1,1)  #效果同上
+    7.组合
+        垂直组合：
+            v = numpy.vstack((u,d))  #[u]
+                                      [d]
+        水平组合：
+            h = numpy.hstack((l,r))  #[l][r]
+        深度组合：
+            d = numpy.dstack((a,b))
+        行组合：针对的是一维数组．
+            r = numpy.row_stack((u,d))
+            u:[1 2 3]
+            d:[4 5 6]
+            r:[[1 2 3]
+               [4 5 6]]
+        列组合：针对的是一维数组．
+            c = numpy.column_stack((l,r))
+            l:[1 2 3]
+            r:[4 5 6]
+            c:[[1 4]
+               [2 5]
+               [3 6]]
+        代码：stack.py
+    8.数组的分割
+        垂直分割：
+            u,m,d = numpy.vsplit(v,3)
+        水平分割：
+            l,m,r = numpy.hsplit(h,3)
+        
+
+
+
+
+
+
+

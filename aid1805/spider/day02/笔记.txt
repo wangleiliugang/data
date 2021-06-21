@@ -1,0 +1,65 @@
+数据结构：
+  数组：可以根据下标来索引元素，访问速度快；插入/删除后面的元素都需要移动，速度较慢。
+  链表：不能根据下标来访问元素只能通过遍历，访问速度慢；插入/删除只改变相关元素，速度较快。
+  栈：FILO，先进后出
+  队列：FIFO，先进先出
+
+第二章：爬虫的基本知识
+
+1.robots协议(该协议告诉搜索引擎哪些页面可以抓取，哪些页面不可以抓取)
+  http://www.taobao.com/robots.txt
+  http://www.qq.com/robots.txt
+  http://www.mafengwo.com/robots.txt
+2.网站地图sitemap
+  部分网站通过:http://www.mafengwo.cn/robots.txt ，可以查找到Sitemap信息
+  http://www.mafengwo.cn/sitemapIndex.xml
+3.估算网站的大小
+  通过:site:www.zhihu.com ,可以查找网站的大小
+4.识别网站用了何种技术
+  在anaconda中安装包：
+  打开:Anaconda Prompt
+  安装:Windows:  pip install builtwith / conda install builtwith
+      Linux:    sudo pip install builtwith
+  使用builtwith来查看这个网站后台所使用的技术架构
+  python交互环境:import builtwith
+                print(builtwith.parse("http://www.sina.com.cn"))
+                -->{'web-servers': ['Nginx'], 'javascript-frameworks': ['Prototype', 'jQuery']}
+                print(builtwith.parse("http://www.tudou.com"))
+                -->{'web-servers': ['Tengine'], 'javascript-frameworks': ['jQuery']}
+5.寻找网站的所有者
+  在anaconda中安装包：
+  打开:Anaconda Prompt
+  安装:pip install python-whois / conda install python-whois
+  python交互环境:import whois
+                whois.whois("http://www.sina.com.cn")
+
+第三章：简单爬虫的实现
+1.HTTP Status Code:
+  200    OK
+  3XX    跳转
+  4XX    一般是客户端浏览器错误。404:页面找不到  403:权限不够
+  5XX    服务器错误
+2.关于URL
+  URL(Uniform/Universal Resource Locator的缩写):统一资源定位器，是用于完整的
+  描述Internet上网页和其它资源的地址的一种标识方法。
+  基本格式:scheme://host[:port#]/path/.../[?query-string][#anchor]
+         scheme:协议(如：http,https,ftp)
+         host:服务器的IP地址或者域名
+         port:服务器的端口(如果是走协议默认端口，缺省端口80)
+         path:访问资源的路径
+         query-string:参数，发送给http服务器的数据
+         anchor:锚(跳转到网页的指定锚点位置)
+  URL是爬虫的入口，非常的重要!
+3.User-Agent池(以空间换时间)
+  通过ua大全，把大量的ua放在一个list中，每次随机从中取出一个来使用。
+4.关于python数据结构的时间复杂度网站:https://wiki.python.org/moin/TimeComplexity    
+5.广度优先遍历和深度优先遍历
+    广度优先遍历可以在数据不相互干扰的情况下，使用多个进程/线程/协程来把任务分解，从而加速爬虫的抓取数据。
+6.完成一个通用爬虫的流程：
+    设置种子站点，宽度及深度；
+    一个已下载的队列来记录所有已完成下载的url；
+    实现一个函数，取得当前url的内容以及所有的外链；
+    递归调用这个函数，来遍历网络；
+    错误处理及日志记录。
+7.什么是HASH？
+    对一段数据进行打指纹。

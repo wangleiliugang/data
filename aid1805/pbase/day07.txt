@@ -1,0 +1,147 @@
+元组　tuple
+  元祖是不可改变的序列，同list一样，元祖可以存放任意类型的元素，一但元组生成，则它不可以改变
+元组的表示方式
+　　用小括号()括起来，单个元素括起来用逗号(,)区分是单个对象还是元组
+　　创建空元组的字面值
+　　　　　　t = ()
+  创建非空元组的字面值
+  　　　　t = 200,
+      t = (20,)
+      t = (1,2,3)
+      t = 100, 200, 300
+元组的错误示例：
+　　t = (20)          # t绑定整数
+　　x, y, z = 100, 200, 300      # 序列赋值
+　　x, y, z = 'ABC'
+　　x, y, z = [10, 20, 30]
+元组的构造函数　tuple
+  tuple() 生成一个空元组，等同于()
+  tuple(iterable) 用可迭代对象生成一个元组
+  示例：t = tuple()
+       t = tuple(range(10))
+       t = tuple('hello')
+       t = tuple([1,2,3,4])
+       t = tuple((1,2,3,4))
+元组的算术运算
+　　+　+＝　*　*＝
+　　用法与列表的用法完全相同
+元组的比较运算
+　　< <= > >= == !=
+  规则与列表完全相同
+
+in /not in 
+索引取值
+切片取值
+　　规则与列表完全相同
+区别：元组是不可变对象，不支持索引赋值和切片赋值
+
+元组的方法：
+　　T.index(value,[begin,[end]])    # 用于获取元组中value 所在的索引位置
+　　T.count(value)                  # 用于获取元组中value 的个数　
+可以用于序列的函数：
+　　len, max, min, sum, any, all
+三个构造函数：
+　　str(obj)
+  list(iterable)
+  tuple(iterable)
+  用于创建相应的对象
+其它函数：
+　　reversed(seq)                      # 返回反向顺序的可迭代对象
+　　sorted(iterable, reversed=False)   # 返回已排序的列表,默认升序
+示例：
+　　　　for x in reversed('ABCD'):
+        print(x)     # D C B A
+    L = [8, 6, 3, 5, 7]
+    L2 = sorted(L)
+    print(L2)                     # [3, 5, 6, 7, 8]
+    L3 = sorted(L, reverse=True)  # [8, 7, 6, 5, 3]
+
+字典　dict
+  1.字典是一种可变的容器，可以存储任意类型的数据
+  2.字典中的每个数据都是用'键'(key)　进行索引，而不像序列可以用下标来进行索引
+  3.字典的数据没有先后顺序关系，字典的存储是无序的
+  4.字典中的数据以键(key)-值(value)对　进行映射存储
+  5.字典的键不能重复，且只能用不可变类型作为字典的键
+
+字典的字面值表示方式：
+　　用{}括起来，以冒号(:)分隔键-值对，各键值对用分号分隔开
+  创建空字典：
+　　  d = {}
+  创建非空的字典：
+  　　d = {'name': 'tarena', 'age': 15}
+    d = {'姓名': '小张'}
+    d = {1:'壹', 2:'贰'}
+
+字典的构造函数　dict
+  dict()             创建一个空字典，等同于{}
+  dict(iterable)     用可迭代对象初始化一个字典
+  dict(**kwargs)     关键字传参形式生成一个字典（键值只能为字符串，才可用此方法生成字典）
+　　示例：d = dict()
+       d = dict([('name', 'tarena'), ('age', 15)])
+       d = dict(name='tarena', age=15)
+不可变类型：
+　　int, float, complex, bool, str, tuple, frozenset(固定集合), bytes(字节串)
+可变类型：
+　　list, dict, set(集合), bytearray(字节数组)
+
+字典的键索引
+　　用[] 运算符可以获取字典内'键'所对应的'值'
+　　语法：字典[键]
+　　获取数据元素：
+　　　　　　d = dict(name='tarena', age=15)
+      print(d['age'])        # 15
+  添加/修改字典元素：
+  　　　　字典[键]　= 表达式
+  　　示例：
+  　　　　d = {}
+      d['name'] = 'tarena'
+      d['age'] = 15
+      d['age'] = 16
+del 语句删除字典的元素
+　　语法：
+　　　　　　del 字典[键]
+　　示例：
+　　　　　　d = {'name':'china', 'pos':'asia'}
+      del d['pos']
+      print(d)
+      del d['name']
+      print(d)
+字典的in / not in 运算符
+　　可以用in 运算符来判断一个'键'是否存在与字典中，如果存在则返回True, 否则返回False
+  not in 与in 返回值相反
+  示例：
+  　　　　d = {'a':1, 'b':2}
+      'a' in d           # True
+      1 in d             # False
+      100 not in d       # True
+      2 not in d         # True
+字典的迭代访问：
+　　字典是可迭代对象，字典只能对键进行迭代访问
+　　d = {'name': 'tarena', (2002, 1, 1): '生日'}
+　　for x in d:
+      print(x)
+可以用于字典的内建函数：
+　　len(x)       返回字典键-值对的个数
+　　max(x)       返回字典的键的最大值
+　　min(x)       返回字典的键的最小值
+　　sum(x)       返回字典所有键的和
+　　any(x)       真值测试，只对键测试，如果其中一个键为True, 结果为True
+　　all(x)       真值测试，全部键为True, 结果才为True
+字典的方法：
+　　D.clear()                 清空字典
+　　D.pop(key)                移除键，同时返回此键所对应的值
+　　D.copy()                  返回字典D的副本，只复制一层(浅拷贝)
+　　D.update(D2)              将字典D2合并到D中，如果键相同，则此键的值取D2的值作为新值
+　　D.get(key,'default')      返回键key所对应的值，如果没有此键，则返回default
+  D.keys()                  返回可迭代的dict_keys集合对象,返回值是一个list
+  D.values()                返回可迭代的dict_values值对象,返回值是一个list
+  D.items()                 返回可迭代的dict_items对象,返回值是一个list
+字典推导式
+　　字典推导式是用可迭代对象依次生成字典内元素的表达式
+　　语法：
+　　　　　　{键表达式 ：值表达式　for 变量　in 可迭代对象　if 真值表达式}
+　　　　　　注：if 语句的内容可以省略
+　　示例：
+　　　　　　d = {x : x**2 for x in range(10)}
+      d = {x : x**2 for x in range(10) if x % 3 == 0}
+        # {0 : 0, 3 : 9, 6 : 36, 9 : 81}

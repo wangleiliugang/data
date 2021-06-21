@@ -1,0 +1,122 @@
+**UDP 数据报套接字服务器(面向无连接的不可靠的传输服务)**
+    1.创建数据报套接字
+    2.绑定本地IP和端口
+    3.收发消息(消息内容必须为bytes格式)
+      recvfrom(BUFFERSIZE)
+        功能：在udp中接收消息
+        参数：BUFFERSIZE　表示一次最多可以接收消息的字节数
+        返回值：data  接收到的消息(bytes)
+               addr  表示接收消息的客户端地址
+      sendto(data,addr)
+        功能：向一个网络终端发送消息
+        参数：data  要发送的消息(bytes)
+             addr  发送对象的地址
+    4.关闭套接字
+
+import sys
+  sys.argv:将命令行内容收集为一个列表，每一个元素是命令行中的一项
+    *命令行传入的内容均为str格式
+    *命令行内容以空格作为分隔，引号可以合成一个整体
+
+UDP　客户端
+    1.创建数据报套接字
+    2.消息的收发
+    3.关闭套接字
+    *recvfrom 每次只能接收一个数据包，如果数据包的大小超过recvfrom设置的大小，
+    则会出现数据丢失
+
+总结　TCP和UDP的区别：
+    1.tcp是有连接的，udp是无连接的
+    2.tcp有三次握手和四次挥手的过程，udp没有
+    3.tcp是以数据流传输数据，会有粘包产生；udp是以数据报的形式传输没有粘包
+    4.tcp的连接需要消耗一定的资源，相比之下udp资源消耗较少
+    5.tcp保证数据的可靠性，udp不保证
+    6.tcp需要listen accept connet;udp不需要这些操作
+
+socket模块　和　套接字属性
+    getpeername()
+        功能：用作服务器连接套接字，查看连接的客户端地址
+    getsockname()
+        功能：获取套接字对应的绑定的地址和端口
+    sockfd.type属性
+        功能：获取套接字的类型
+    fileno()
+        功能：获取套接字的文件描述符编码
+        文件描述符：系统会给进程中放入每一个IO操作对象匹配一个>=0的正整数作为标号，此标号称为该IO操作的文件描述符；一个进程中所有IO的文件描述符不会重复
+    setsockopt(level,optname,value)
+        功能：设置套接字选项，可以增加或者改变套接字的功能
+        参数：level  要定义的选项类型(比如SOL_SOCKET,IPPROTO_IP,IPPROTO_TCP)
+             optname  每种类型都有具体的选项，根据具体的需求选择相应的选项进行设置
+             (比如SOL_SOCKET ---> SO_REUSEADDR)
+             value  将选择的选项设置相应的值
+            **将端口号设置为立即重用:sockfd.setsockopt(SOL_SOCKET,SO_REUSEADDR,1)**
+    getsockopt(level,optname)
+        功能：获取相应选项的值
+        参数：level  要获取的选项类型
+             optname  每种类型都有具体的选项，根据具体需求选择要获取的选项
+        返回值：获取到的值
+
+socket服务器模型
+    硬件服务器：计算机主机　IBM HP
+              集成　　分布式
+    软件服务器：网络服务器，提供后端逻辑服务和请求处理的程序集合及架构
+              比如：web服务器
+              服务器架构：服务器的组织形式(c/s架构，b/c架构)
+              服务器追求：更快速，更安全，并发量更大
+
+**循环服务器模型**
+    循环处理客户端的请求，处理完一个继续处理下一个
+    缺点：不能同时处理多个请求，不允许某个客户端长时间占用服务器资源
+    *因为udp不需要进行连接，所以循环服务器模型更加适合udp通信
+    代码：tcp_server01.py
+
+**并发服务器模型**
+    每有一个客户端就创建一个进程/线程去处理客户端的具体请求事件，而主进程/主线程则继续接收其它客户端的连接
+    fork
+        1.创建套接字　绑定　监听
+        2.接收客户端连接请求 创建新的进程
+        3.主进程继续接收下一个客户端连接请求，子进程处理客户端事件
+        4.有客户端断开则关闭相应的子进程
+    multiprocessing --> Process
+    threading --> Thread
+        1.创建套接字　绑定　监听
+        2.接收客户端连接请求 创建新的进程
+        3.主线程继续接收下一个客户端连接请求，分支线程处理客户端事件
+    代码：1.fork_tcp_server.py
+         2.threading_tcp_server.py
+
+**python中的socketserver模块**(python2 ---> SocketServer模块)
+    DatagramRequestHandler
+    ForkingMixIn
+    ForkingTCPServer
+    ForkingUDPServer
+    StreamRequestHandler
+    TCPServer
+    ThreadingMixIn
+    ThreadingTCPServer
+    ThreadingUDPServer
+    UDPServer
+    通过socketserver模块构建服务器模型，分为三个部分:
+        多进程/多线程        TCP/UDP       streamhandler/datagramhandler
+        ForkingMixIn      TCPServer         StreamRequestHandler
+        ThreadingMixIn    UDPServer         DatagramRequestHandler
+        共有4中组合方法：
+          1.ForkingTCPServer = ForkingMixIn + TCPServer
+          2.ForkingUDPServer = ForkingMixIn + UDPServer
+          3.ThreadingTCPServer = ThreadingMixIn + TCPServer
+          4.ThreadingUDPServer = ThreadingMixIn + UDPServer
+    **使用socketserver模块创建服务器的步骤：**
+        1.创建服务器类
+        2.创建处理类
+        3.使用创建的服务器类生成服务器
+        代码：1.socket_server.py
+             2.socket_server01.py
+
+作业：写一个ftp文件服务程序
+     1.服务端：解决客户端问题
+     2.客户端：发起请求
+     3.功能：展示服务端指定目录下的文件
+            可以从服务器端下载文件
+            可以上传本地文件到服务器目录
+     4.提示：客户端可以用print打印一个简单的界面
+            注意粘包的问题(文件传输最好用tcp)

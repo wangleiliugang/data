@@ -1,0 +1,171 @@
+**系统模块　sys**
+  此模块全部是运行时系统相关的信息
+--------------------------------
+　　　变量　　　　　　　　　　　　　　　　　　　　　　　　　　　描述
+　　sys.path          　　　　　　　　 模块搜索路径path[0]是当前脚本程序的路径名，否则为''
+  sys.modules        　　　　　　　　已加载模块的字典
+  sys.version        　　　　　　　　版本信息字符串
+  sys.version_info   　　　　　　　　版本信息的命名元组
+  sys.platform      　　　　　　　　 操作系统平台名称信息
+  sys.argv        　　　　　　　　   命令行参数argv[0]代表当前脚本程序路径名
+  sys.copyright              获取python版权相关的信息
+  sys.builtin_module_names  　获取python内建模块的名称(字符串元组)
+　　示例1：
+　　import sys
+  if sys.version[0] == '2':
+      print("我运行在python2里")
+　　elif sys.version[0] == '3':
+      print("我运行在python3里")
+　　示例2：
+  if sys.version_info[0] == 2:
+      print("python2")
+  elif sys.version_info[0] == 3:
+      print("python3")
+  print("当前的主版本号是：",sys.version_info.major,
+        "当前的次版本号是：",sys.version_info.minor,
+        "当前的微版本号是：",sys.version_info.micro)
+  示例3：
+　　import sys
+  print("当前的操作系统是：", sys.platform)
+  示例4：
+　　import sys
+　　# sys.argv 绑定用户启动程序时命令行参数的列表
+  print("sys.argv =", sys.argv)
+----------------------------------------------------------
+　　标准输入输出时会用到
+　　sys.stdin                  标准输入文件对象，多用于input()
+  sys.stdout                 标准输出文件对象，多用于print()
+  sys.stderr                 标准错误输出文件对象，用于输出错误信息
+----------------------------------------------------------
+　　　函数名　　　　　　　　　　　　　　　　　　　　　　　描述
+　　sys.exit([arg])            退出程序，正常退出时sys.exit(0)
+  sys.getrecursionlimit()    得到递归嵌套层次限制(栈的深度)
+  sys.setrecursionlimit()    得到和修改递归嵌套层次限制(栈的深度)
+
+自定义模块
+　　示例见：45_mymodule.py
+  注：自定义的模块的模块名必须符合"标识符"的命名规则(同变量名)
+
+模块有各自独立的作用域
+　　示例见：46_mymodule2.py
+
+模块化编程的优点：
+　　1.有利于多人合作开发
+　　2.使代码更易于维护
+　　3.提高代码的复用率
+　　4.有利于解决变量名冲突问题
+
+import 语句　搜索模块的路径顺序：
+　　1.搜索程序运行时的路径(当前路径)
+　　2.sys.path 提供的路径
+　　3.搜索内置模块
+
+sys.path 是一个存储模块搜索路径的列表
+　　1.可以把自定义的模块放在相应的路径下可以导入
+　　2.可以把自己模块的路径添加在sys.path　列表中
+    import sys
+    sys.path.append('/home/tarena')
+
+模块的加载过程：
+　　1.在模块导入时，模块的所有语句会执行
+　　2.如果一个模块已经导入，则再次导入时不会重新执行模块内的语句
+
+**模块的重新加载：**
+　　import mymodule3
+  import imp              # imp模块是管理导入模块的模块
+  imp.reload(mymodule3)   # 重新加载mymodule3模块
+
+模块被导入和执行的过程：
+　　1.先搜索相关的路径找模块(.py)
+  2.判断是否有此模块对应的.py 文件，如果存在pyc文件且比.py文件新，则直接加载.pyc文件
+  3.否则用.py文件生成.pyc　后再进行加载
+
+pyc 模块的编译文件
+　　              编译　　　　　　　　　　　　　　　　解释执行
+　　mymodule1.py -----> mymodule1.pyc --------> python3
+
+模块的属性
+　　属性的实质是变量(是模块内的全局变量)
+
+模块内预置的属性
+1.__doc__属性
+　　作用：用来绑定模块的文档字符串
+　　模块内第一个没有赋值给任何变量的字符串为模块的文档字符串
+2.__file__属性
+  作用：用来绑定模块对应的文档路径名
+  1.对于内建模块，不绑定路径(没有__file__属性)
+  2.对于其它模块，是绑定路径名的字符串
+3.__name__属性
+  此属性用来记录模块的自身名字
+　　作用：1.记录模块名
+　　　　　　　2.用来判断是否为主模块(最先运行的模块)
+　　说明：当此模块为主模块时，__name__绑定'__main__'
+       当此模块不是主模块时，此属性绑定模块名
+
+模块的__all__列表
+　　模块中的__all__列表是一个用来存放可导出属性的字符串列表
+　　作用：当用from import * 语句导入时，只导入__all__列表内的属性
+
+  import os
+  os.__file__
+  subl /usr/lib/python3.5/os.py
+  可以查看os.py 内容
+
+模块的隐藏属性
+　　模块中以'_'开头的属性，在from import * 语句导入时，将不被导入，通常称这些属性为隐藏属性。
+
+**随机模块　random**
+  作用：用于模拟或生成随机输出的模块
+　　import random as R
+　　　函数名　　　　　　　　　　　　　　　                 　　描述
+　　R.random()                          返回一个[0, 1)之间的随机实数
+　　R.uniform(a,b)                      返回一个[a, b)区间内的随机实数
+　　R.randrange([start,]stop[,step])    返回range(start,stop,step)中的随机数
+　　R.choice(a,b)                       从序列中返回随机元素
+　　R.shuffle(seq[,random])             随机指定序列的顺序(乱序序列)
+　　R.sample(seq,n)                     从序列中选择n个随机且不重复的元素
+　　R.getrandbits(nbit)                 以长整型的形式返回用nbit位来表示的随机数
+　　R.seed(a=None)               用给定的数a设置随机种子，不给参数a则用当前时间设置随机种子
+
+**包　(模块包) package**
+  包是将模块以文件夹的组织形式进行分组管理的方法。
+  作用：将一系列模块进行分类管理，有利于防止命名冲突;
+       可以在需要时加载一个或部分模块而不是全部模块。
+　　包示例：
+　　mypack/
+      __init__.py
+      menu.py
+      games/
+          __init__.py
+          contra.py
+          supermario.py
+          tanks.py
+      office/
+          __init__.py
+          excel.py
+          word.py
+
+__init__.py文件
+　　常规包内必须存在的文件
+　　__init__.py 会在包加载时被自动调用
+　　作用：编写此包的内容
+　　　　　　　在内部填写文档字符串
+　　　　　　　在__init__.py 内可以加载此包所依赖的一些其它模块
+
+包的导入
+　　用三条import 语句可以导入包(同模块的导入规则)
+　　import 包名　[as 包别名]
+　　import 包名.模块名　[as 模块新名]
+　　import 包名.子包名.模块名
+
+　　from 包名　import 模块名　[as 模块新名]
+　　from 包名.子包名　import 模块名　[as 模块新名]
+　　from 包名.子包名.模块名　import 模块名　[as 模块新名]
+
+　　from 包名　import *
+　　from 包名.模块名　import *
+  ...
+
+包的__init__.py 内的 __all__列表
+　　作用：用来记录此包中有哪些子包或模块在用from 包名　import * 语句导入时是否被调导入
+　　说明：__all__列表只对　from import * 语句起作用

@@ -1,0 +1,59 @@
+Redis
+
+特性：
+    1.支持持久化，可以将数据写入磁盘，供重启后使用。
+    2.支持多种数据类型储存。
+    3.支持数据备份。
+优势：
+    1.性能：读写能力强
+    2.丰富的存储类型
+    3.原子性：单独操作是原子性的，支持事物
+安装：
+    1.安装redis服务
+      sudo apt-get install redis-server
+    2.启动redis
+      redis-server
+命令行操作
+    redis-cli
+    常用命令：
+      存储数据：set key value
+      获取数据：get key
+      删除数据：del key(返回1表示删除成功；0表示删除失败)
+      检查数据是否存在：exists key(返回1表示存在；0表示不存在)
+      设置数据的过期时间(单位:秒)：expire key 时间(返回1表示成功设定过期时间)
+                              ttl key(返回值表示当前数据的剩余时间;-1:无过期时间,
+                                       -2:已过期)
+      设置数据的过期时间(单位:毫秒)：pexpire key 毫秒时间(返回1表示成功设定毫秒过期时间)
+                           pttl key(以毫秒返回值表示当前数据的剩余时间;-1:无过期时间,
+                                      -2:已过期)
+      randomkey：从数据库中随机返回一个key
+      rename key newkey：重新命名key
+      renamenx key newkey：仅当newkey不存在时，将key命名为newkey
+      keys *：获取全部key
+      type key：获取key所存数据的类型
+
+hash(哈希方式存储，用于存储对象)
+    存储对象：hmset key field1 value1 field2 value2 ...
+            ex:hmset R name "xiaomin" age 20 hobby "song"
+    获取数据：hget key field
+            ex:hget R name
+    获取字段和值：hgetall key
+    查询key中是否存在该字段：hexists key field(返回值1表示存在，0表示不存在)
+    删除key中指定的字段：hdel key field(返回1表示删除成功，0表示删除失败)
+    查询key中全部字段名：hkeys key
+    查询key中全部值：hvals key
+    获取key中数据的数量：hlen key
+    hset key field value：key存在修改value,不存在则添加
+      ex:hset R age 18
+    hsetnx key field value：key存在则不做修改,不存在时进行添加
+      ex:hsetnx r pid 115200
+
+事务
+    一次执行多个命令，将命令放入队列缓存，当被执行的时候用命令逐条执行，彼此命令之间不会干扰，一条命令执行失败，其他命令继续执行。当事务执行过程中，其他客户端提交命令请求将不会插入到当前事务中。
+事务执行阶段：
+    1.开始事务：multi
+    2.命令放入队列缓存：多个命令(返回值：QUEUED)
+    3.执行事务：exec
+
+Django Redis
+    安装：sudo pip3 install django-redis

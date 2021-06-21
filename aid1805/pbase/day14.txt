@@ -1,0 +1,124 @@
+包的相对导入
+　　是指包内模块的相互导入(包的相对导入只能使用from语法导入)
+　　语法：
+        from 相对路径包或模块　import 属性或模块名
+　　　　　 或from 相对路径包或模块　import *
+  相对路径： . 代表当前路径
+           .. 代表上一级目录
+           ... 代表上二级目录
+           ....　依次类推
+           注：相对导入时不能超出包的外部
+
+包的加载路径
+　　同模块的加载路径相同
+　　1.当前文件夹
+　　2.sys.path 给出的路径
+
+什么是错误？
+　　错误是指由于逻辑或语法等导致一个程序无法正常执行的问题。
+　　特点：有些错误是无法预知的。
+
+异常　exception
+　　什么是异常？
+　　异常是程序出错时标识的一种状态;
+　　当异常发生时，程序不会再向下执行，而转去调用此函数的地方待处理此错误并恢复为正常状态。
+
+异常的作用
+　　1.通知上层调用者有错误产生需要处理；
+　　2.用作信号通知.
+
+try 语句的两种语法
+　　try-except 语句
+　　try-finally 语句
+
+1.try-except 语句
+　　语法：try:
+           可能触发异常的语句
+    　　　except 错误类型1　[as 变量1]:
+           异常处理语句1
+    　　　except 错误类型2　[as 变量2]:
+           异常处理语句2
+    　　　except (错误类型3,　错误类型4, ...) [as 变量3]:
+           异常处理语句3
+    　　　...
+       except:
+           异常处理语句other
+       else:
+           未发生异常时执行的语句(没有异常时一定会执行，如果有异常则不会执行)
+    　　　finally:
+           最终执行语句(无论正常或异常，一定会执行的语句)
+　　作用：尝试捕获异常，将程序转为正常状态并继续执行。
+  语法说明：
+  　　1.as 子句是用于绑定错误对象的变量，可以省略不写;
+　　　　2.except 子句可以有一个或多个，但至少要有一个;
+　　　　3.else 子句最多只能有一个，也可以省略不写;
+　　　　4.finally 子句最多只能有一个，也可以省略不写。
+2.try-finally 语句
+  语法：try:
+           可能触发异常的语句
+  　　　　　finally:
+           最终执行语句
+　　说明：finally 子句不可以省略;
+　　　　　　　一定不存在except 子句。
+　　作用：通常用try-finally语句来做触发异常时必须要处理的事情，无论异常是否发生，finally　子句都会执行
+　　注：try-finally 语句不会改变程序的(正常/异常)状态
+
+Python 全部的异常类型
+　　　错误类型　　　　　　　　　　　　　　　　说明
+-------------------------------------------
+  ZeroDivisionError      除(或取模)零(所有数据类型)
+  ValueError             传入无效的参数
+  AssertionError         断言语句失败
+  Stoplteration          迭代器没有更多的值
+  IndexError             序列中没有此索引(index)
+  IndentationError       缩进错误
+  OSError                输入/输出操作失败
+  ImportError            导入模块/对象失败
+  NameError              未声明/初始化对象(没有属性)
+  AttributeError         对象没有这个属性
+  BaseException          所有异常的基类
+  SystemExit             解释器请求退出
+  Keyboardlnterrupt      用户中断执行(通常是输入^C)
+  Exception              常规错误的基类
+  GeneratorExit          生成器(generator)发生异常来通知退出
+  StandardErroe          所有的内建标准异常的基类
+  ArithmeticError        所有数值计算错误的基类
+  FloatingPointError     浮点计算错误
+  OverflowError          数值运算超出最大限制
+  EOFError               没有内建输入，到达EOF标记
+  EnvironmentError       操作系统错误的基类
+  OSError                操作系统错误
+  WindowsError           系统调用错误
+  LookupError            无效数据查询的基类
+  KeyError               映射中没有这个键
+  MemoryError            内存溢出错误(对于python解释器不是....)
+  UnboundLocalError      访问未初始化的本地变量
+  ReferenceError         弱引用(Weak reference)试图访问已经．．．
+  RuntimeError           一般的运行时错误
+  NotlmplementedError    尚未实现的方法
+  SyntaxError Python     语法错误
+  TabError               Tab 和空格混用
+  SystemError            一般的解释器系统错误
+  TypeError              对类型无效的操作
+  UnicodeError           Unicode 相关的错误
+  UnicodeDecodeError     Unicode 解码时的错误
+  UnicodeEncodeError     Unicode 编码时的错误
+  UnicodeTranslateError  Unicode 转换时的错误
+--------------------------------------------
+请问错误通知是谁发出的？怎么发出的？
+
+raise 语句
+　　作用：触发一个错误，让程序进入异常状态
+　　语法：raise 异常类型　或者　raise 异常对象
+　　示例：见54_raise.py　　　55_raise_sample2.py
+
+assert 语句(断言语句)
+　　语法：assert 真值表达式, 错误数据(通常是字符串)
+　　作用：当真值表达式为False时，用错误数据创建一个AssertionError 类型的错误，并进入异常状态
+　　类似于：if 真值表达式　== False:
+             raise AssertionError(错误类型)
+　　示例：见56_assert.py
+
+为什么要用异常处理机制？
+　　在程序调用层数较深时，向主调函数传递错误信息需要用return 语句层层传递比较麻烦，所以用异常处理机制
+  示例：见57_built_house.py

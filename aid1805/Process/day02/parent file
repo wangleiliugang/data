@@ -1,0 +1,14 @@
+fork()
+
+if pid < 0:
+    print("create process failed")
+elif pid == 0:
+    print("This is the new process")
+    print(a)
+    a = 1000
+    print(a)
+else:
+    print("This is the parent process")
+    print(a)
+
+print("The process end")

@@ -1,0 +1,7 @@
+xiaowang,21,100
+xiaoli,19,93
+xiaolei,20,98
+xiaolin,22,95
+xiaohu,25,96
+daming,23,91
+xiaofa,23,90

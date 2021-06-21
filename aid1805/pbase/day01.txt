@@ -1,0 +1,197 @@
+linux
+  linux基本结构
+    应用程序
+    标准库
+    linux操作系统内核
+    硬件
+  linux/unix命令
+    命令名 [选项] [参数]
+      []的内容代表可选
+    命令示例：
+      ls
+      ls -s #列表显示所有的文件
+      pwd
+      cd /
+      cd 
+  linux常用命令
+    1.clear:清屏，快捷键ctrl+L
+    2.pwd:显示当前的工作路径位置
+    3.ls:显示文件或文件夹的内容
+        ls -l:列表显示文件的详细信息
+        ls -a:显示全部文件/文件夹
+    4.cd:改变当前工作路径
+    5.mkdir:创建一个或多个文件夹
+        mkdir -p XXX:如果是中间的文件夹不存在，则逐级创建所有的文件夹
+    6.rmdir:删除一个或多个文件夹(文件夹内必须为空)
+        rmdir -p XXX:如果是中间文件夹也不为空，则逐级删除中间文件夹
+    7.tree:显示目录树
+    8.touch:创建新文件/如果文件已经存在，则更新文件的修改时间
+    9.rm:删除文件或文件夹
+      rm -r XXX:递归删除文件夹内的文件和文件夹
+      rm -i XXX:删除前给出提示（y代表yes,n代表no）
+      rm -f XXX:强制删除，不给任何提示
+    10.操作带有特殊符号的路径的方法
+      用两个双引号（""）把路径括起来
+    11.help:查看此命令的帮助信息
+      如:ls --help
+         rm --help
+    12.man:查看命令所对应的帮助文档（手册）
+      如:man ls
+         man rm
+    13.cat:将文件内容作为标准输出打印到终端
+      cat 文件路径
+    14.more:分页显示文本文件的内容（q:退出，空格键:下翻一页）
+      more 文件路径
+    15.通配符
+      *　匹配0个，1个或多个任意字符
+      ? 匹配1个任意字符
+    16.cp:复制文件或文件夹
+      cp [选项]　源文件或文件夹　目标文件或文件夹
+        常用选项：
+          -a 复制文件夹中的全部内容
+    17.mv:文件搬移或更名
+      mv 源文件或文件夹　目标文件或文件夹
+    18.find:根据文件名等信息查找指定的文件
+      find 路径　-name "文件名"
+      如：find ~ -name "*.txt" #查找用户主目录下有哪些文件名以.txt结尾
+    19.grep:查找文件中相应的内容，及文本信息
+      grep "内容" [选项]　文件名或路径
+        常用选项：
+          -n      显示行号
+          -r/-R　　　递归搜索文件夹内的文件
+      如：grep "tedu" -nr /etc
+          grep "tedu" -nr /etc 2> /dev/null
+            2> /dev/null:输出重定向
+    20.压缩和解压缩
+      gzip:用zip压缩算法对文件进行压缩，生成压缩后的文件
+        gzip 文件名
+      gunzip:用gzip压缩过的文件进行解压
+        gunzip 文件名
+    21.tar:对文件或文件夹进行打包和解包的操作
+      tar [选项]　文件名　[文件名或路径]
+        常用选项：
+          -c  　     创建包
+          -x　　      解包
+          -v　　      显示操作的文件细节
+          -z　　      用gzip/gunzip对包进行压缩和解压缩
+          -f　文件名　　正在操作的文件名
+          -C　路径　　　　改变解压缩路径（只对解包有效）
+        示例：
+          #将linux/day01打包并压缩为day01.tar.gz
+            tar -czvf day01.tar.gz linux/day01
+          ＃将day01.tar.gz解包
+            cd ~/
+            tar -xzvf aid1805/day01.tar.gz
+    22.sudo:用超级用户(root)权限来执行命令
+      sudo 命令　[选项] [参数]
+        常用选项：
+          -i  切换到root用户
+        如：sudo -i
+    23.exit:退出用户登录
+    24.chmod:修改文件权限
+      chmod 权限　文件名/文件夹名
+        权限：
+          u  用户（属主）
+          g　　同组用户
+          o　　其它用户
+          a　　所有用户
+          +　　添加权限
+          -　　删除权限
+        示例：
+          chmod u+r a.txt
+          chmod o-rwx a.txt
+          chmod g+rw a.txt
+  输出重定向
+    输出分为两种：
+      1.标准输出
+      2.标准错误输出
+    标准输出重定向
+      >   将一个命令的标准输出重定向到指定文件  
+      >>　　将一个命令的标准输出重定向＇追加＇到指定文件
+    标准错误输出重定向
+      2>   将一个命令的标准＇错误＇输出重定向到指定文件  
+      2>>　　将一个命令的标准＇错误＇输出重定向＇追加＇到指定文件
+    重定向所有输出
+      &>
+      &>>
+
+
+
+python 简介：
+  创始人：Gui van Rossum 荷兰人
+  时间：1989 圣诞节期间
+  pythond的命名：源于一个喜剧团 Monty python
+
+python 应用领域
+　　系统运维
+　　网络编程
+　　科学计算
+　　人工智能，机器人
+　　web开发
+　　大数据及数据库编程
+　　云计算
+　　教育
+　　游戏，图像
+　　其它
+
+python 优缺点
+　　优点：
+　　　　　面向对象（Java,c++,python）
+     免费
+     可移植
+     可混合编程（c,c++,Java,.net）
+     简单易学易用
+     应用领域广泛
+     开发效率高
+     开源
+  缺点：
+  　　　与c,c++相比执行速度不够快
+  　　　不能封闭源代码
+
+python 官网
+　　www.python.org
+
+python 版本
+　　python 2.7(2020年结束维护)
+　　python v3.5(当前教学版本)
+　　python v3.8(最新版本)
+
+python 安装
+　　windows,Mac OS X,Unix...
+
+python 运行
+　　python 解释执行器
+　　　　　CPython      (c)
+     Jython       (java)
+     Ironpython   (.net)
+     PyPy         (python)
+
+第一个python程序
+　　见：hello.py 
+  1.python3 hello.py
+  2.在hello.py第一行写入：#! /usr/bin/python3
+        chmod a+x hello.py
+        ./hello.py
+
+python 交互提示模式
+　　python3
+  >>>          可以在>>>提示符下输入语句
+
+　　退出：
+　　　　　　ctrl+d
+      >>>quit()
+      >>>exit()
+
+python 注释
+　　＃开头，直至行尾
+　　作用：让注释内容不参与解释执行
+
+python 核心数据类型
+　　数字（整数，浮点数，复数，布尔型）
+　　字符串
+　　列表等
+
+
+
+
+

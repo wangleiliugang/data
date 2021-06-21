@@ -1,0 +1,145 @@
+数据备份(在Linux终端操作)
+    1.命令格式
+        mysqldump -u用户名 -p 源库名 > 路径(/XXX.sql)   -->(导出所有的表结构和数据)
+                                    　# 不一定是绝对路路径
+        mysqldump -u root -p -d 源库名 > XX.sql       -->(导出所有表结构，不导出数据)
+        示例：root@tedu:~# mysqldump -uroot -p db3 > ~/mydata/db3.sql
+             tarena@tedu:~/aid1805/mysql/mydata$ mysqldump -uroot -p db3 > mydata/db3.sql
+    2.源库名的表示方式
+        --all-databases       备份所有库
+        库名                   备份单个库
+        -B 库1 库2 ...         备份多个库
+        库名　表1　表2　...　　　　　　　　备份指定库的指定表
+    3.示例
+        1.备份所有库为all_mysql.sql放到主目录下mydata目录中
+        root@tedu:~/mydata# mysqldump -uroot -p --all-databases > ~/mydata/all_mysql.sql
+        2.备份三个库，放入主目录下mydata目录中
+        root@tedu:/# mysqldump -uroot -p -B db1 db2 db3 > ~/mydata/threedatabases.sql
+        3.备份省，市，县三张表
+        root@tedu:~# mysqldump -uroot -p db3 sheng city xian > ~/mydata/threetables.sql
+数据恢复(在Linux终端操作)
+    **注意：需要先在mysql服务器中创建一个库**
+    1.命令格式
+        mysql -uroot -p 目标库名　< 路径(/XXX.sql)
+          示例：
+            root@tedu:~/mydata# mysql -uroot -p db33 < db3.sql
+    2.从所有库的备份文件中恢复某一个库(--one-database)
+        mysql -uroot -p --one-database 目标库名 < 路径(完整库名)
+                                                (例如：all_mysql.sql)
+          示例：
+            root@tedu:~/mydata# mysql -uroot -p --one-database db3 < all_mysql.sql
+    3.注意：
+        1.恢复库时如果恢复到原有库会将表中数据覆盖，但新增的表不会删除．
+        2.在恢复时如果要恢复的库不存在，则需要先创建库．
+    练习：
+      1.先备份db3库，删除省，市和县三张表
+      mysql> drop table sheng,city,xian;
+      2.在db3库中创建一张表t888
+      mysql> create table t888(id int);
+      3.恢复db3库
+      root@tedu:~/mydata# mysql -uroot -p db3 < db3.sql
+    
+ER模型＆ER图
+    1.定义
+        ER模型即实体-关系模型，ER图即实体-关系图
+    2.三个概念
+        1.实体
+            1.定义：现实世界中任何可以被认知，区分的事物
+            2.示例：学校，学生，教师，课程，班主任，企业，职工，产品...
+        2.属性
+            1.定义：实体所具有的特性
+            2.示例
+                学生属性:学号，姓名，年龄，性别，专业...
+                产品属性：产品编号，产品名称，规格...
+        3.关系
+            1.定义：实体之间的关系
+            2.分类
+                一对一关系(1:1)
+                一对多关系(1:n)
+                多对多关系(m:n)
+ER图的绘制
+    1.矩形框代表实体，菱形框代表关系，椭圆形代表属性
+    2.示例:学生选课系统
+workbench(图形化界面操作数据库)
+事务&事务回滚
+    1.事务定义
+        一件事从开始发生到结束的整个过程．
+    2.属性
+        1.原子性：一个事务是不可分割的工作单位，事务中的各个操作要么都做，要么都不做
+        2.一致性：事务必须从一个一致性状态到另一个一致性状态
+        3.隔离性：一个事务的执行不能被其它并发事务干扰
+        4.持久性：一个事务一但提交，它对数据库的改变是永久性的
+    3.事务及事务回滚的应用
+        1.mysql中默认sql语句会自动commit到数据库
+          查看方法：show variables like "autocommit";
+        2.事务应用
+            1.开启事务
+            mysql> start transaction;
+            　　# 此时autocommit 被禁用，SQL命令不会对数据库中数据做修改
+            2.终止事务
+            mysql> commit; 或者 rollback;
+                    提交        　　回滚
+            3.注意:
+              1.事务&事务回滚只针对表记录的操作：增加，删除，修改．
+              2.对创建库,创建表是无效的．
+    4.示例
+        1.背景
+            你：　　　　建行卡
+            你朋友：　工行卡
+            你在建行自动取款机给你朋友(工商银行卡)转账
+        2.mysql> start transaction;
+          mysql> update CCB set money=95000 where name="转钱";
+          mysql> update ICBC set money=断电了，宕机了;
+          mysql> rollback;
+
+**Python数据库编程**
+    1.Python数据库接口(Python DB-API)
+        1.定义：为开发人员提供的数据库应用编程接口
+        2.python 支持的数据库服务软件
+          MySQL, Oracle, SQL_Server, Sybase, Mogodb, ...
+    2.Python3 提供的操作MySQL的模块
+        导入模块(import pymysql)
+    3.pymysql的使用流程:
+        1.建立数据库连接
+          db = pymysql.connect("localhost", "root", "123456", charset="utf8")
+        2.创建游标对象
+          cur = db.cursor()
+        3.使用游标对象的方法和SQL语句操控MySQL数据库
+          # 创建库Python
+            cur.execute("create database if not exists python;")
+          # 切换库
+            cur.execute("use python;")
+          # 创建表
+            cur.execute("create table if not exists t1(\
+                            id int primary key,\
+                            name varchar(20),\
+                            score tinyint unsigned)default charset=utf8;")
+          # 在t1中插入5条记录
+            cur.execute("insert into t1 values\
+                            (1,'貂蝉',88),\
+                            (2,'赵子龙',100),\
+                            (3,'诸葛亮',80),\
+                            (4,'张飞',60),\
+                            (5,'司马懿',99);")
+        4.提交commit
+          db.commit()
+        5.关闭游标
+          cur.close()
+        6.关闭数据库连接
+          db.close()
+        示例见:FirstPymysql.py
+    4.建立数据库连接
+        1.语法格式
+          对象名(db) = pymysql.connet("主机地址", "用户名", "密码", "库名", charset="utf8")
+        2.connet对象(db)的方法
+          1.cursor()  创建一个游标对象  db.cursor()
+          2.commit()  提交到数据库  db.commit()
+          3.rollback()  回滚  db.rollback()
+          4.close()  关闭与数据库的连接　　db.close()
+        3.cursor游标对象(cur)的方法
+          1.execute()  执行sql命令
+          2.fetchone()  取得结果集的第一条记录
+          3.fetchmany(m)  取得结果集的m条记录
+          4.fetchall()  取得结果集的所有行
+          5.close()  关闭游标对象
+          属性：cursor.rowcount(返回命令执行所影响的条数)
